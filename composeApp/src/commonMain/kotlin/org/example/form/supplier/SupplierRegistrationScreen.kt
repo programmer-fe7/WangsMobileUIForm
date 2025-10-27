@@ -26,6 +26,7 @@ import id.wangsit.compose.wangs.ui.form.FormField
 import id.wangsit.compose.wangs.ui.form.Validator
 import id.wangsit.compose.wangs.ui.form.field.DropdownField
 import id.wangsit.compose.wangs.ui.form.field.FieldLabel
+import id.wangsit.compose.wangs.ui.form.field.ImagePickerField
 import id.wangsit.compose.wangs.ui.form.field.MultiDropdownField
 import id.wangsit.compose.wangs.ui.form.field.TextField
 import id.wangsit.compose.wangs.ui.form.field.phonenumberfield.PhoneNumberField
@@ -214,6 +215,17 @@ fun SupplierRegistrationScreen() {
                 state = state,
                 label = "PIC Email",
                 placeholder = "Enter PIC email",
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        Spacing.md.adaptive.heightBox()
+
+        // Image
+        FormField(form, SupplierDto::image) { state ->
+            ImagePickerField(
+                state = state,
+                label = "Image",
                 modifier = Modifier.fillMaxWidth()
             )
         }

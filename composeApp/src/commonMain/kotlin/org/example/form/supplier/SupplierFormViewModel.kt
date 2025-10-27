@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import id.wangsit.compose.wangs.ui.form.FormBuilder
 import id.wangsit.compose.wangs.ui.form.Validator
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
@@ -26,7 +25,46 @@ data class SupplierDto(
     val picName: String? = null,
     val picPhoneNumber: String? = null,
     val picEmail: String? = null,
-)
+    val image: ByteArray? = null
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as SupplierDto
+
+        if (companyName != other.companyName) return false
+        if (country != other.country) return false
+        if (state != other.state) return false
+        if (city != other.city) return false
+        if (zipCode != other.zipCode) return false
+        if (companyLocation != other.companyLocation) return false
+        if (companyPhoneNumber != other.companyPhoneNumber) return false
+        if (item != other.item) return false
+        if (picName != other.picName) return false
+        if (picPhoneNumber != other.picPhoneNumber) return false
+        if (picEmail != other.picEmail) return false
+        if (!image.contentEquals(other.image)) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = companyName.hashCode()
+        result = 31 * result + (country?.hashCode() ?: 0)
+        result = 31 * result + (state?.hashCode() ?: 0)
+        result = 31 * result + (city?.hashCode() ?: 0)
+        result = 31 * result + (zipCode?.hashCode() ?: 0)
+        result = 31 * result + (companyLocation?.hashCode() ?: 0)
+        result = 31 * result + (companyPhoneNumber?.hashCode() ?: 0)
+        result = 31 * result + (item?.hashCode() ?: 0)
+        result = 31 * result + (picName?.hashCode() ?: 0)
+        result = 31 * result + (picPhoneNumber?.hashCode() ?: 0)
+        result = 31 * result + (picEmail?.hashCode() ?: 0)
+        result = 31 * result + (image?.contentHashCode() ?: 0)
+        return result
+    }
+}
 
 @Serializable
 data class SupplierItem(
@@ -37,7 +75,7 @@ data class SupplierItem(
 private val client = createHttpClient()
 private val api = SupplierApi(client)
 
-suspend fun registerSupplier(body: JsonObject) {
+suspend fun registerSupplier(body: SupplierDto) {
     try {
         println("Submitting company form: $body")
         val result = api.createSupplier(body)
@@ -130,7 +168,12 @@ class SupplierFormViewModel : ViewModel() {
         // Optional meta fields
         field(property = SupplierDto::item)
 
+        // Optional meta fields
+        field(property = SupplierDto::image,
+            validators = listOf(Validator.MaxImageSize())
+        )
+
         // Submit handler (call your real repository here)
-        onSubmitJsonObject { registerSupplier(it) }
+        onSubmit { registerSupplier(it) }
     }.build()
 }
