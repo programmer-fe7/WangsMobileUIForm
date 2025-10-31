@@ -3,6 +3,8 @@
     <domain-config cleartextTrafficPermitted="true">
         <!-- Allow local IP or your domain -->
         <domain includeSubdomains="true">192.168.88.249</domain>
+        <domain includeSubdomains="true">192.168.137.1</domain>
+        <domain includeSubdomains="true">127.0.0.1</domain>
         <domain includeSubdomains="true">localhost</domain>
     </domain-config>
 </network-security-config>

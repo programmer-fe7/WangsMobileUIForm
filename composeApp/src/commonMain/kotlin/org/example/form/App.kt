@@ -2,6 +2,7 @@ package org.example.form
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import org.example.form.asset.AssetFormScreen
 import org.example.form.supplier.SupplierRegistrationScreen
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -9,7 +10,9 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Preview
 fun App() {
     MaterialTheme {
-        SupplierRegistrationScreen()
+        AssetFormScreen()
+//        SupplierRegistrationScreen()
+
 
 //        var showContent by remember { mutableStateOf(false) }
 //        Column(

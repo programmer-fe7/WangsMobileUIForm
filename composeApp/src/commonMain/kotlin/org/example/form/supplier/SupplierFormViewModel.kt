@@ -4,12 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import id.wangsit.compose.wangs.ui.form.FormBuilder
 import id.wangsit.compose.wangs.ui.form.Validator
+import io.ktor.client.request.forms.MultiPartFormDataContent
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.serializer
-import org.example.form.network.SupplierApi
+import org.example.form.network.ApiServices
 import org.example.form.network.createHttpClient
 
 @Serializable
@@ -73,12 +74,12 @@ data class SupplierItem(
 )
 
 private val client = createHttpClient()
-private val api = SupplierApi(client)
+private val apiServices = ApiServices(client)
 
-suspend fun registerSupplier(body: SupplierDto) {
+suspend fun registerSupplier(body: MultiPartFormDataContent) {
     try {
         println("Submitting company form: $body")
-        val result = api.createSupplier(body)
+        val result = apiServices.createSupplier(body)
         println("✅ Response from server: $result")
     } catch (e: Exception) {
         println("❌ Error: ${e.message}")
@@ -172,8 +173,9 @@ class SupplierFormViewModel : ViewModel() {
         field(property = SupplierDto::image,
             validators = listOf(Validator.MaxImageSize())
         )
+        file(property = SupplierDto::image)
 
         // Submit handler (call your real repository here)
-        onSubmit { registerSupplier(it) }
+        onSubmitMultipartObject { registerSupplier(it) }
     }.build()
 }
