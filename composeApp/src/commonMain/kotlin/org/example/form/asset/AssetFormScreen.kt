@@ -1,3 +1,4 @@
+@file:Suppress("UNCHECKED_CAST")
 package org.example.form.asset
 
 import androidx.compose.foundation.layout.Arrangement
