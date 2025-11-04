@@ -2,13 +2,13 @@ package org.example.form.supplier
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import id.wangsit.compose.wangs.ui.form.ByteArraySerializer
 import id.wangsit.compose.wangs.ui.form.FormBuilder
 import id.wangsit.compose.wangs.ui.form.Validator
 import io.ktor.client.request.forms.MultiPartFormDataContent
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.buildJsonArray
-import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.serializer
 import org.example.form.network.ApiServices
 import org.example.form.network.createHttpClient
@@ -26,6 +26,7 @@ data class SupplierDto(
     val picName: String? = null,
     val picPhoneNumber: String? = null,
     val picEmail: String? = null,
+    @Serializable(with = ByteArraySerializer::class)
     val image: ByteArray? = null
 ) {
     override fun equals(other: Any?): Boolean {
@@ -93,17 +94,10 @@ suspend fun registerSupplier(body: MultiPartFormDataContent) {
 class SupplierFormViewModel : ViewModel() {
     val form = FormBuilder<SupplierDto>(
         coroutineScope = viewModelScope,
-        serializer = serializer()
+        serializer = serializer(),
+        fileFields = setOf("image"),
+        filenames = mapOf("image" to "image.png")
     ).apply {
-        registerConverter(SupplierItem::class){ any ->
-            any?.let { si ->
-                buildJsonObject {
-                    put("itemName", JsonPrimitive(si.itemName))
-                    put("sku", buildJsonArray { si.sku.forEach { add(JsonPrimitive(it)) } })
-                }
-            }
-        }
-
         // Required: companyName
         field(
             property = SupplierDto::companyName,
@@ -167,13 +161,16 @@ class SupplierFormViewModel : ViewModel() {
         )
 
         // Optional meta fields
-        field(property = SupplierDto::item)
+        @Suppress("UNCHECKED_CAST")
+        field(
+            property = SupplierDto::item,
+            serializer = ListSerializer(SupplierItem.serializer()) as KSerializer<List<SupplierItem>?>,
+        )
 
         // Optional meta fields
         field(property = SupplierDto::image,
             validators = listOf(Validator.MaxImageSize())
         )
-        file(property = SupplierDto::image)
 
         // Submit handler (call your real repository here)
         onSubmitMultipartObject { registerSupplier(it) }

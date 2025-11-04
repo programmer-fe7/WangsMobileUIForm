@@ -2,6 +2,7 @@ package org.example.form.asset
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import id.wangsit.compose.wangs.ui.form.ByteArraySerializer
 import id.wangsit.compose.wangs.ui.form.FormBuilder
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import kotlinx.coroutines.delay
@@ -18,6 +19,7 @@ data class AssetDto(
     val category: String,
     val alias: String,
     val type: String,
+    @Serializable(with = ByteArraySerializer::class)
     val photo_asset: ByteArray? = null,
 ) {
     override fun equals(other: Any?): Boolean {
@@ -77,7 +79,9 @@ suspend fun registerAsset(body: MultiPartFormDataContent) {
 class AssetFormViewModel : ViewModel() {
     val form = FormBuilder<AssetDto>(
         coroutineScope = viewModelScope,
-        serializer = serializer()
+        serializer = serializer(),
+        fileFields = setOf("photo_asset"),
+        filenames = mapOf("photo_asset" to "photo_asset.png")
     ).apply {
 
         field(property = AssetDto::group)

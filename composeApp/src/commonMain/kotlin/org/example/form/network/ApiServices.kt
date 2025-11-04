@@ -46,6 +46,7 @@ class ApiServices(private val client: HttpClient) {
         return body
     }
 
+    // Example manual multipart request
     suspend fun postAssetMultipart(dto: AssetDto) {
         val response = client.post(endPoint2) {
             setBody(MultiPartFormDataContent(formData {
