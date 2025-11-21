@@ -2,7 +2,6 @@ package org.example.form.asset
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import id.wangsit.compose.wangs.ui.form.ByteArraySerializer
 import id.wangsit.compose.wangs.ui.form.FormBuilder
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import kotlinx.coroutines.delay
@@ -19,37 +18,8 @@ data class AssetDto(
     val category: String,
     val alias: String,
     val type: String,
-    @Serializable(with = ByteArraySerializer::class)
-    val photo_asset: ByteArray? = null,
-) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || this::class != other::class) return false
-
-        other as AssetDto
-
-        if (group != other.group) return false
-        if (brand != other.brand) return false
-        if (category != other.category) return false
-        if (name != other.name) return false
-        if (alias != other.alias) return false
-        if (type != other.type) return false
-        if (!photo_asset.contentEquals(other.photo_asset)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = group.hashCode()
-        result = 31 * result + brand.hashCode()
-        result = 31 * result + category.hashCode()
-        result = 31 * result + name.hashCode()
-        result = 31 * result + alias.hashCode()
-        result = 31 * result + type.hashCode()
-        result = 31 * result + (photo_asset?.contentHashCode() ?: 0)
-        return result
-    }
-}
+    val photo_asset: List<Byte>? = null,
+)
 
 private val client = createHttpClient()
 private val apiServices = ApiServices(client)

@@ -57,7 +57,7 @@ class ApiServices(private val client: HttpClient) {
                 append("type", dto.type)
                 append("alias", dto.alias)
                 dto.photo_asset?.let {
-                    append("photo_asset", it, Headers.build {
+                    append("photo_asset", it.toByteArray(), Headers.build {
                         append("Content-Disposition", "filename=photo_asset.jpg")
                         append("Content-Type", "image/jpeg")
                     })
